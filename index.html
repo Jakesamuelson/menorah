@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digital Menorah - Free Online Virtual Hanukkah Candle Lighting</title>
+    <meta name="description" content="Experience Hanukkah with our free digital menorah. Interactive candle lighting, Hebrew blessings, and proper sequence. No download needed - works on all devices instantly.">
+    <meta name="keywords" content="digital menorah, virtual menorah, online menorah, Hanukkah candles, Chanukah blessings, virtual candle lighting">
+    
+    <!-- Social Meta Tags -->
+    <meta property="og:title" content="Digital Menorah - Free Online Virtual Hanukkah Candle Lighting">
+    <meta property="og:description" content="Light Hanukkah candles virtually with our free digital menorah. No download needed, works on all devices.">
+    <meta property="og:url" content="https://menorah.jakesamuelson.me">
+    
+    <link rel="icon" href="assets/images/menorah.png" type="image/png">
+    <meta property="og:image" content="assets/images/menorah.png" />
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Digital Menorah - Virtual Hanukkah Candle Lighting",
+            "headline": "Interactive Digital Menorah for Hanukkah Celebration",
+            "applicationCategory": "ReligiousApplication",
+            "description": "Free online digital menorah for celebrating Hanukkah. Features interactive candle lighting, Hebrew blessings with translations, correct lighting order, and Hanukkah dates. Perfect for learning or celebrating the Festival of Lights virtually.",
+            "keywords": "digital menorah, virtual menorah, online menorah, Hanukkah candle lighting, virtual Hanukkah celebration, Chanukah blessings",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Interactive virtual menorah with realistic candle lighting",
+              "Traditional Hanukkah blessings in Hebrew and English",
+              "Proper shamash and candle lighting sequence",
+              "Accurate Hanukkah dates and times",
+              "Mobile-friendly design",
+              "Educational Hanukkah resources"
+            ],
+            "browserRequirements": "Works on all modern web browsers",
+            "url": "https://menorah.jakesamuelson.me/",
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "name": "Digital Menorah",
+              "@id": "https://menorah.jakesamuelson.me/"
+            },
+            "potentialAction": {
+              "@type": "UseAction",
+              "target": "https://menorah.jakesamuelson.me/"
+            },
+            "about": {
+              "@type": "Thing",
+              "name": "Hanukkah Digital Menorah",
+              "description": "An authentic virtual menorah experience for the Jewish Festival of Lights, providing proper candle lighting sequence and blessings for all eight nights of Hanukkah",
+              "sameAs": [
+                "https://www.wikidata.org/wiki/Q9143",
+                "https://www.wikidata.org/wiki/Q102595"
+              ]
+            },
+            "audience": {
+              "@type": "Audience",
+              "audienceType": "Jewish community, interfaith families, educators, and anyone interested in celebrating Hanukkah"
+            },
+            "isAccessibleForFree": true,
+            "educationalUse": ["Religious Instruction", "Demonstration"],
+            "inLanguage": ["en", "he"]
+          }
+    </script>
+    <style>
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle, #e6f3ff 0%, #0051de 100%);
+    color: white;
+    font-family: Arial, sans-serif;
+    position: relative;
+}
+.top-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+.audio-btn {
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    background: transparent;
+    margin-left: 0px;
+}
+.prayers-btn, .reset {
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.prayers-btn {
+    background: #2196F3;
+}
+.reset {
+    background: #4CAF50;
+}
+.menorah-container {
+    position: relative;
+    margin: 10px 0;
+    width: 700px;
+    height: 600px;
+}
+.menorah {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.candles-container {
+    display: flex;
+    position: absolute;
+    bottom: 270px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1; /* Changed from 2 to 1 to be behind holders */
+    width: 685px;
+    justify-content: space-between;
+}
+.candle {
+    width: 45px;
+    height: 250px;
+    background: linear-gradient(to right, #e6d5ab, #f4e4bc, #e6d5ab);
+    position: relative;
+    cursor: pointer;
+    border-radius: 6px;
+}
+.candle::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 10px;
+    background-color: #4a4a4a;
+    border-radius: 2.5px;
+}
+.shamash {
+    height: 250px;
+    position: relative;
+    cursor: move;
+    z-index: 3;
+    bottom: 22px;
+}
+.flame {
+    display: none;
+    width: 30px;
+    height: 60px;
+    background: linear-gradient(
+        #ffff00 10%,
+        #ffcc00 25%,
+        #ff9933 45%,
+        #ff5500 80%
+    );
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: absolute;
+    top: -65px;  /* Adjusted to align with wick */
+    left: 50%;
+    transform: translateX(-50%);
+    animation: flicker 0.7s infinite steps(3, end);
+}
+.lit .flame {
+    display: block;
+}
+@keyframes flicker {
+    0% { transform: translateX(-50%) scaleY(1) rotate(-2deg); }
+    25% { transform: translateX(-51%) scaleY(1.1) rotate(1deg); }
+    50% { transform: translateX(-49%) scaleY(0.95) rotate(3deg); }
+    75% { transform: translateX(-52%) scaleY(1.05) rotate(-1deg); }
+    100% { transform: translateX(-50%) scaleY(1) rotate(2deg); }
+}
+.menorah-base {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 280px;
+    z-index: 1;
+}
+.base-center {
+    width: 80px;
+    height: 210px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 60px;
+    border-radius: 7px;
+}
+.base-bottom {
+    width: 560px;
+    height: 60px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 14px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.candle-holders {
+    display: flex;
+    position: absolute;
+    bottom: 270px;
+    width: 700px;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: space-between;
+    z-index: 2; /* Added z-index to be above candles */
+}
+.holder {
+    width: 60px; /* Slightly wider than candles */
+    height: 25px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 7px;
+    position: relative;
+    left: -0px; /* Offset to center under candle */
+}
+/* Shamash holder circle overlay */
+
+
+.holder-connector {
+    position: absolute;
+    bottom: 260px; /* Just below holders */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 680px; /* Width to span all holders */
+    height: 10px; /* Thin rectangle */
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 5px;
+    z-index: 2; /* Added z-index to bring to front */
+}
+.instructions {
+    margin-top: 20px;
+    text-align: center;
+    color: #333;
+}
+.drawer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 600px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px 0 0 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    color: #333;
+    height: 40vh; /* Increased height to 80% of viewport */
+    display: flex;
+    flex-direction: column;
+}
+    @keyframes sway {
+        50% { transform: translateX(-49%) scaleY(0.95) rotate(3deg); }
+        75% { transform: translateX(-52%) scaleY(1.05) rotate(-1deg); }
+        100% { transform: translateX(-50%) scaleY(1) rotate(2deg); }
+    }
+    .menorah-base {
+        position: absolute;
+        bottom: 0;
+    left: 0;
+    right: 0;
+    height: 280px;
+    z-index: 1;
+}
+.base-center {
+    width: 80px;
+    height: 210px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 60px;
+    border-radius: 7px;
+}
+.base-bottom {
+    width: 560px;
+    height: 60px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 14px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.candle-holders {
+    display: flex;
+    position: absolute;
+    bottom: 270px;
+    width: 700px;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: space-between;
+    z-index: 2; /* Added z-index to be above candles */
+}
+.holder {
+    width: 60px; /* Slightly wider than candles */
+    height: 25px;
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 7px;
+    position: relative;
+    left: -0px; /* Offset to center under candle */
+}
+.holder-connector {
+    position: absolute;
+    bottom: 260px; /* Just below holders */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 680px; /* Width to span all holders */
+    height: 10px; /* Thin rectangle */
+    background: linear-gradient(to right, #c6a640, #ffd700, #c6a640);
+    border-radius: 5px;
+    z-index: 2; /* Added z-index to bring to front */
+}
+.instructions {
+    margin-top: 20px;
+    text-align: center;
+    color: #333;
+}
+.drawer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 600px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px 0 0 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    color: #333;
+    height: 40vh; /* Increased height to 80% of viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer.open {
+    transform: translateY(0);
+}
+
+.drawer-handle {
+    width: 40px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 3px;
+    margin: -10px auto 15px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.drawer-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f0f0f0;
+    z-index: 1001;
+}
+
+.drawer-close::before,
+.drawer-close::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 2px;
+    background: #666;
+}
+
+.drawer-close::before {
+    transform: rotate(45deg);
+}
+
+.drawer-close::after {
+    transform: rotate(-45deg);
+}
+
+
+.prayer-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 0 20px;
+    margin-right: -20px; /* Compensate for padding */
+    padding-right: 20px; /* Add padding back */
+    display: block;
+    white-space: normal;
+}
+
+.prayer {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.prayer:last-child {
+    border-bottom: none;
+}
+
+.prayer h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.prayer-text {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.hebrew {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.2em;
+    text-align: right;
+    direction: rtl;
+}
+
+.transliteration {
+    font-style: italic;
+}
+
+.meaning {
+    grid-column: 1 / -1;
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.night-indicator {
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+    .hanukkah-status {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        text-align: center;
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+    }
+
+    .hanukkah-status h2 {
+        margin: 0;
+        font-size: 1.8em;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    </style>
+</head>
+<body>
+    <!-- Notification for mobile users -->
+    <div id="orientation-notification" style="
+        display: none; 
+        position: fixed; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 1001;
+        text-align: center;
+        font-size: 1.2em;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        max-width: 90%;
+        line-height: 1.4;">
+        <div style="
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            animation: rotate 2s infinite;">
+            ↺
+        </div>
+        Please rotate your device to landscape mode for the best experience 📱
+        <style>
+            @keyframes rotate {
+                0% { transform: rotate(0deg) scale(1.2); }
+                100% { transform: rotate(-90deg) scale(1.2); }
+            }
+        </style>
+    </div>
+    <audio id="myAudio" src="assets/audio/music.mp3" preload="auto"></audio>
+    <div class="top-buttons">
+        <button class="prayers-btn" onclick="togglePrayers()">🙏</button>
+        <button class="reset" onclick="resetCandles()">🔄</button>
+        <button class="audio-btn" onclick="toggleAudio()" style="background: #2196F3;">
+            <span id="audioToggle">🔇</span>
+        </button>
+    </div>
+    <h1 style="font-size: 3em; 
+               background: linear-gradient(45deg, #f5f5f5, #e0e0e0); 
+               -webkit-background-clip: text;
+               background-clip: text;
+               -webkit-text-fill-color: transparent;
+               text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+               font-family: 'Arial', sans-serif;
+               letter-spacing: 2px;
+               margin: 20px 0;">Digital Menorah</h1>
+    <div id="hanukkah-status" class="hanukkah-status"></div>
+    <div class="menorah-container">
+        <div class="menorah">
+            <div class="candles-container">
+                <div class="candle" data-position="1">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="2">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="3">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="4">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle shamash" id="shamash">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="5">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="6">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="7">
+                    <div class="flame"></div>
+                </div>
+                <div class="candle" data-position="8">
+                    <div class="flame"></div>
+                </div>
+            </div>
+        </div>
+        <div class="menorah-base">
+            <div class="candle-holders">
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+                <div class="holder"></div>
+            </div>
+            <div class="holder-connector"></div>
+            <div class="base-center"></div>
+            <div class="base-bottom"></div>
+        </div>
+    </div>
+    <div class="instructions">
+        Click the Shamash (middle candle) to light it, then drag it to light the other candles from left to right
+    </div>
+
+    <script>
+        const shamash = document.getElementById('shamash');
+        const chanukkahDates = {
+  2024: {
+    start: "2024-12-25",
+    end: "2025-01-02",
+    hebrewYear: 5785
+  },
+  2025: {
+    start: "2025-12-14",
+    end: "2025-12-22",
+    hebrewYear: 5786
+  },
+  2026: {
+    start: "2026-12-04",
+    end: "2026-12-12",
+    hebrewYear: 5787
+  },
+  2027: {
+    start: "2027-12-24",
+    end: "2028-01-01",
+    hebrewYear: 5788
+  },
+  2028: {
+    start: "2028-12-12",
+    end: "2028-12-20",
+    hebrewYear: 5789
+  },
+  2029: {
+    start: "2029-12-01",
+    end: "2029-12-09",
+    hebrewYear: 5790
+  },
+  2030: {
+    start: "2030-12-20",
+    end: "2030-12-28",
+    hebrewYear: 5791
+  },
+  2031: {
+    start: "2031-12-10",
+    end: "2031-12-18",
+    hebrewYear: 5792
+  },
+  2032: {
+    start: "2032-11-28",
+    end: "2032-12-06",
+    hebrewYear: 5793
+  },
+  2033: {
+    start: "2033-12-17",
+    end: "2033-12-25",
+    hebrewYear: 5794
+  },
+  2034: {
+    start: "2034-12-07",
+    end: "2034-12-15",
+    hebrewYear: 5795
+  },
+  2035: {
+    start: "2035-12-26",
+    end: "2036-01-03",
+    hebrewYear: 5796
+  },
+  2036: {
+    start: "2036-12-14",
+    end: "2036-12-22",
+    hebrewYear: 5797
+  },
+  2037: {
+    start: "2037-12-04",
+    end: "2037-12-12",
+    hebrewYear: 5798
+  },
+  2038: {
+    start: "2038-12-24",
+    end: "2039-01-01",
+    hebrewYear: 5799
+  },
+  2039: {
+    start: "2039-12-13",
+    end: "2039-12-21",
+    hebrewYear: 5800
+  },
+  2040: {
+    start: "2040-12-02",
+    end: "2040-12-10",
+    hebrewYear: 5801
+  },
+  2041: {
+    start: "2041-12-21",
+    end: "2041-12-29",
+    hebrewYear: 5802
+  },
+  2042: {
+    start: "2042-12-11",
+    end: "2042-12-19",
+    hebrewYear: 5803
+  },
+  2043: {
+    start: "2043-11-30",
+    end: "2043-12-08",
+    hebrewYear: 5804
+  }
+};
+
+        let isPlaying = false;
+        let isDragging = false;
+        let isLit = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+        let nextCandlePosition = 1;
+        let hannukahNight = 0;
+
+        // Update Hanukkah status on page load
+        
+        window.onload = function() {
+            const hanukkahInfo = getCurrentHanukkahInfo();
+            hannukahNight = hanukkahInfo.night;
+            const statusElement = document.getElementById('hanukkah-status');
+            if (hanukkahInfo.isHanukkah) {
+                statusElement.innerHTML = `
+                    <h2>
+                        <span style="font-size: 0.8em; color: #FFD700; display: block; margin-bottom: 5px;">Night</span>
+                        <span style="font-size: 2.5em; font-weight: bold; color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">${hannukahNight}</span>
+                        <span style="font-size: 0.8em; color: #FFD700; display: block; margin-top: 5px;">of Hanukkah</span>
+                    </h2>`;
+            } else {
+                statusElement.innerHTML = `
+                    <h2 style="color: rgba(255,255,255,0.8); font-size: 1.5em;">
+                        It is not currently Hanukkah
+                        <br>
+                        <button onclick="overrideForm.style.display = overrideForm.style.display === 'none' ? 'block' : 'none';" 
+                                style="margin-top: 10px; 
+                                       padding: 8px 16px;
+                                       background: #2196F3;
+                                       color: white;
+                                       border: none;
+                                       border-radius: 4px;
+                                       cursor: pointer;
+                                       font-size: 0.8em;
+                                       box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            Override Days
+                        </button>
+                    </h2>`;
+            }
+            const candles = document.querySelectorAll('.candle:not(.shamash)');
+            candles.forEach(candle => {
+                const position = parseInt(candle.dataset.position);
+                if (position <= (8 - hanukkahInfo.night)) {
+                    candle.style.visibility = 'hidden';
+                }
+            });
+        }
+
+        shamash.addEventListener('click', function(e) {
+            if (!isLit) {
+                this.classList.add('lit');
+                isLit = true;
+                playAudio();
+            }
+        });
+        // Function to hide Hanukkah status
+        function hideHanukkahStatus() {
+            const statusElement = document.getElementById('hanukkah-status');
+            statusElement.style.display = 'none';
+        }
+
+        // Function to show Hanukkah status
+        function showHanukkahStatus() {
+            const statusElement = document.getElementById('hanukkah-status');
+            statusElement.style.display = 'block';
+        }
+
+        // Add calendar button and form for manual override
+        const calendarButton = document.createElement('button');
+        calendarButton.innerHTML = '📅';
+        calendarButton.style.cssText = `
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #2196F3;
+        `;
+        
+        // Add calendar button to top-buttons div
+        const topButtons = document.querySelector('.top-buttons');
+        topButtons.appendChild(calendarButton);
+
+        // Create hidden override form
+        const overrideForm = document.createElement('form');
+        overrideForm.style.display = 'none';
+        overrideForm.innerHTML = `
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                        background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; 
+                        z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.2); 
+                        min-width: 300px; text-align: center;">
+                <h3 style="margin: 0 0 20px 0; color: #333;">Override Hanukkah Day</h3>
+                <div style="margin-bottom: 20px;">
+                    <label for="dayOverride" style="color: #333; font-size: 1.1em; display: block; margin-bottom: 10px;">
+                        Select Day (0-8):
+                    </label>
+                    <input type="number" id="dayOverride" min="0" max="8" 
+                           style="width: 80px; padding: 8px; font-size: 1.1em; text-align: center; 
+                                  border: 2px solid #2196F3; border-radius: 4px;">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="submit" 
+                            style="background: #2196F3; color: white; border: none; 
+                                   padding: 10px 20px; border-radius: 4px; font-size: 1.1em;
+                                   cursor: pointer; transition: background 0.3s;">
+                        Set Day
+                    </button>
+                    <button type="button" onclick="overrideForm.style.display='none';"
+                            style="background: #666; color: white; border: none; 
+                                   padding: 10px 20px; border-radius: 4px; font-size: 1.1em;
+                                   cursor: pointer; transition: background 0.3s;">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overrideForm);
+
+        // Toggle form visibility when calendar button is clicked
+        calendarButton.addEventListener('click', function() {
+            overrideForm.style.display = overrideForm.style.display === 'none' ? 'block' : 'none';
+            if (overrideForm.style.display === 'block') {
+                // Focus on the input field after a small delay to ensure the form is visible
+                setTimeout(() => {
+                    const input = document.getElementById('dayOverride');
+                    input.focus();
+                    // For mobile devices, this will help ensure the keyboard appears
+                    input.click();
+                }, 100);
+            }
+        });
+
+        overrideForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const overrideDay = parseInt(document.getElementById('dayOverride').value);
+            hideHanukkahStatus();
+            if (overrideDay >= 0 && overrideDay <= 8) {
+                const candles = document.querySelectorAll('.candle:not(.shamash)');
+                candles.forEach(candle => {
+                    const position = parseInt(candle.dataset.position);
+                    if (position <= (8 - overrideDay)) {
+                        candle.style.visibility = 'hidden';
+                    } else {
+                        candle.style.visibility = 'visible';
+                    }
+                });
+                overrideForm.style.display = 'none'; // Hide form after submission
+            }
+        });
+
+        // Add both mouse and touch events
+        shamash.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+        shamash.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+
+        function dragStart(e) {
+            if (isLit) {
+                // Handle both mouse and touch events
+                const point = e.type.includes('touch') ? e.touches[0] : e;
+                initialX = point.clientX - xOffset;
+                initialY = point.clientY - yOffset;
+
+                if (e.target === shamash || e.target.parentElement === shamash) {
+                    isDragging = true;
+                    if (e.type.includes('touch')) {
+                        e.preventDefault(); // Prevent scrolling while dragging
+                    }
+                }
+            }
+        }
+
+        function drag(e) {
+            if (isDragging && isLit) {
+                e.preventDefault();
+                // Handle both mouse and touch events
+                const point = e.type.includes('touch') ? e.touches[0] : e;
+                currentX = point.clientX - initialX;
+                currentY = point.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                setTranslate(currentX, currentY, shamash);
+
+                // Calculate rotation based on cursor/touch position
+                const rotation = point.clientX > window.innerWidth / 2 ? 'rotate(10deg)' : 'rotate(-10deg)';
+                shamash.style.transform += rotation;
+
+                document.querySelectorAll('.candle:not(.shamash)').forEach(candle => {
+                    if (isTipsIntersecting(shamash, candle)) {
+                        lightCandle(candle);
+                    }
+                });
+            }
+        }
+        // Add animation for smooth return
+        const returnToPosition = () => {
+            shamash.style.transition = 'transform 0.5s ease-out';
+            setTranslate(0, 0, shamash);
+            // Reset offsets
+            xOffset = 0;
+            yOffset = 0;
+            // Remove transition after animation completes
+            setTimeout(() => {
+                shamash.style.transition = 'none';
+            }, 500);
+        };
+
+        function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false
+            returnToPosition();
+        }
+        
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+        }
+
+        function isTipsIntersecting(shamash, candle) {
+            // Get the top points of both candles
+            const shamashRect = shamash.getBoundingClientRect();
+            const candleRect = candle.getBoundingClientRect();
+            
+            // Define a small area at the top of each candle (10px height)
+            const tipHeight = 10;
+            
+            const shamashTip = {
+                left: shamashRect.left,
+                right: shamashRect.right,
+                top: shamashRect.top,
+                bottom: shamashRect.top + tipHeight
+            };
+            
+            const candleTip = {
+                left: candleRect.left,
+                right: candleRect.right,
+                top: candleRect.top,
+                bottom: candleRect.top + tipHeight
+            };
+            // Check if the tip areas intersect
+            return !(shamashTip.right < candleTip.left || 
+                    shamashTip.left > candleTip.right || 
+                    shamashTip.bottom < candleTip.top || 
+                    shamashTip.top > candleTip.bottom);
+        }
+
+        function lightCandle(candle) {
+            if (isLit && !candle.classList.contains('lit')) {
+                candle.classList.add('lit');
+                nextCandlePosition++;
+            }
+        }
+
+        function resetCandles() {
+            document.querySelectorAll('.candle').forEach(candle => {
+                candle.classList.remove('lit');
+            });
+            isLit = false;
+            nextCandlePosition = 1;
+            xOffset = 0;
+            yOffset = 0;
+            setTranslate(0, 0, shamash);
+            shamash.style.transform = 'translate(0, 0)';  // Reset shamash position
+        }
+        function playAudio() {
+            const audio = document.getElementById('myAudio');
+            audio.play().catch(error => {
+                console.log('Audio playback failed:', error);
+            });
+            document.getElementById('audioToggle').textContent = '🔊'; // Change to play emoji
+            isPlaying = true;
+        }
+        function toggleAudio() {
+            const audio = document.getElementById('myAudio');
+            if (isPlaying) {
+            audio.pause();
+            document.getElementById('audioToggle').textContent = '🔇'; // Change to play emoji
+            } else {
+            audio.play().catch(error => {
+                console.log('Audio playback failed:', error);
+            });
+            document.getElementById('audioToggle').textContent = '🔊'; // Change to mute emoji
+        }
+        isPlaying = !isPlaying; // Toggle state
+        }
+        
+
+        function getCurrentHanukkahInfo() {
+            // Get current date in Pacific time
+            const today = new Date().toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
+            const pacificDate = new Date(today);
+            const year = pacificDate.getFullYear();
+            
+            // If Hanukkah data exists for this year
+            if (chanukkahDates[year]) {
+                // Convert start/end dates to Pacific time
+                const startDate = new Date(chanukkahDates[year].start + "T00:00:00").toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
+                const endDate = new Date(chanukkahDates[year].end + "T23:59:59").toLocaleString("en-US", {timeZone: "America/Los_Angeles"});
+                const pacificStartDate = new Date(startDate);
+                const pacificEndDate = new Date(endDate);
+                
+                // Check if today is within Hanukkah using Pacific dates
+                if (pacificDate >= pacificStartDate && pacificDate <= pacificEndDate) {
+                    // Calculate which night it is (add 1 because dates start at 0)
+                    const nightNumber = Math.floor((pacificDate - pacificStartDate) / (1000 * 60 * 60 * 24))+1;
+                    return {
+                        isHanukkah: true,
+                        night: nightNumber,
+                        hebrewYear: chanukkahDates[year].hebrewYear
+                    };
+                }
+            }
+    return {
+        isHanukkah: false,
+        night: 0,
+        hebrewYear: null
+    };
+}
+
+
+        function togglePrayers() {
+            const drawer = document.querySelector('.drawer');
+            drawer.classList.toggle('open');
+        }
+        
+        // Function to check orientation
+        function checkOrientation() {
+            const notification = document.getElementById('orientation-notification');
+            if (window.innerWidth < window.innerHeight) {
+                notification.style.display = 'block'; // Show notification
+            } else {
+                notification.style.display = 'none'; // Hide notification
+            }
+        }
+
+        // Initial check
+        checkOrientation();
+
+        // Add event listener for orientation change
+        window.addEventListener('resize', checkOrientation);
+    </script>
+    <div class="drawer">
+    <div class="prayer-container" style="display: flex; justify-content: space-between; padding: 0 20px;">
+        <div class="prayer" style="flex: 1; margin: 0 10px;">
+            <h3>First Blessing</h3>
+            <div class="night-indicator">Recited every night</div>
+            <div class="prayer-text">
+                <div class="hebrew" style="font-size: 0.9em;">
+                    ברוך אתה ה' א‑לוהינו מלך העולם אשר קדשנו במצותיו וצונו להדליק נר של חנוכה
+                </div>
+                <div class="transliteration" style="font-size: 0.8em;">
+                    Baruch atah Adonai, Eloheinu melech ha'olam, asher kid'shanu b'mitzvotav v'tzivanu l'hadlik ner shel Chanukah.
+                </div>
+                <div class="meaning" style="font-size: 0.8em;">
+                    Blessed are You, Lord our God, King of the universe, who has sanctified us with His commandments and commanded us to kindle the Chanukah light.
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 1px; background-color: #ddd; margin: 0 15px;"></div>
+
+        <div class="prayer" style="flex: 1; margin: 0 10px;">
+            <h3>Second Blessing</h3>
+            <div class="night-indicator">Recited every night</div>
+            <div class="prayer-text">
+                <div class="hebrew" style="font-size: 0.9em;">
+                    ברוך אתה ה' א‑לוהינו מלך העולם שעשה נסים לאבותינו בימים ההם בזמן הזה
+                </div>
+                <div class="transliteration" style="font-size: 0.8em;">
+                    Baruch atah Adonai, Eloheinu melech ha'olam, she'asah nisim la'avoteinu bayamim hahem bazman hazeh.
+                </div>
+                <div class="meaning" style="font-size: 0.8em;">
+                    Blessed are You, Lord our God, King of the universe, who performed miracles for our ancestors in those days at this time.
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 1px; background-color: #ddd; margin: 0 15px;"></div>
+
+        <div class="prayer" style="flex: 1; margin: 0 10px;">
+            <h3>Third Blessing - Shehecheyanu</h3>
+            <div class="night-indicator">First night only</div>
+            <div class="prayer-text">
+                <div class="hebrew" style="font-size: 0.9em;">
+                    ברוך אתה ה' א‑לוהינו מלך העולם שהחינו וקימנו והגיענו לזמן הזה
+                </div>
+                <div class="transliteration" style="font-size: 0.8em;">
+                    Baruch atah Adonai, Eloheinu melech ha'olam, shehecheyanu v'kiyemanu v'higiyanu lazman hazeh.
+                </div>
+                <div class="meaning" style="font-size: 0.8em;">
+                    Blessed are You, Lord our God, King of the universe, who has granted us life, sustained us, and enabled us to reach this occasion.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <footer style="text-align: center; margin: 20px 0; color: #333;">
+        <p>
+            <a href="https://jakesamuelson.me/" target="_blank" style="color: inherit; text-decoration: none;">&copy; Jake Samuelson 2024</a> | 
+            <a href="first-blessing.html" style="color: inherit; text-decoration: none;">Blessings</a> | 
+            <a href="hanukkah-dates.html" style="color: inherit; text-decoration: none;">Dates</a>
+        </p>
+    </footer>
+</body>
+</html>

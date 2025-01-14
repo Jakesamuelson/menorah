@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 72px;
+            margin: 0;
+            color: #333;
+        }
+
+        .game-area {
+            width: 100vw;
+            height: 60vh;
+            border: none;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #menorah {
+            position: absolute;
+            width: clamp(60px, 12vw, 90px);
+            height: auto;
+            bottom: 0;
+            left: 50px;
+            transition: bottom 0.3s;
+            user-select: none;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .dreidel {
+            position: absolute;
+            width: clamp(45px, 9vw, 70px);
+            height: auto;
+            bottom: 0;
+            animation: spin 1s infinite linear;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        #score {
+            font-size: 24px;
+            margin: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                height: 50vh;
+            }
+            
+            #menorah {
+                width: clamp(50px, 10vw, 80px);
+            }
+            
+            .dreidel {
+                width: clamp(40px, 8vw, 60px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <p>Oops! Page not found. But while you're here...</p>
+        <p>Press SPACE to make the menorah jump over the dreidels!</p>
+        <div class="game-area" id="gameArea">
+            <img src="/assets/images/Menorah_blue.png" id="menorah" alt="menorah">
+            <div id="gameOver">
+                Game Over!<br>
+                Score: <span id="finalScore">0</span><br>
+                Press ENTER to restart
+            </div>
+        </div>
+        <div id="score">Score: <span id="scoreValue">0</span></div>
+        <a href="/">Return to Home</a>
+    </div>
+
+    <script>
+        const menorah = document.getElementById('menorah');
+        const gameArea = document.getElementById('gameArea');
+        const scoreValue = document.getElementById('scoreValue');
+        const gameOverScreen = document.getElementById('gameOver');
+        const finalScore = document.getElementById('finalScore');
+        let score = 0;
+        let isJumping = false;
+        let gameIsOver = false;
+        let dreidels = [];
+        let gameSpeed = 10; // Increased starting speed
+        const maxSpeed = 25; // Higher maximum speed
+        const speedIncrease = 1; // Faster speed progression
+
+        function jump() {
+            if (!isJumping && !gameIsOver) {
+                isJumping = true;
+                let jumpHeight = 500; // Increased from 180 to match new sizes
+                let jumpCount = 0;
+                let totalFrames = 35; // Keep same timing for responsiveness
+                
+                function jumpAnimation() {
+                    if (jumpCount < totalFrames) {
+                        // Adjusted phases for quicker rise and fall
+                        let phase;
+                        if (jumpCount < totalFrames/3) {
+                            // Rising phase
+                            phase = (jumpCount/(totalFrames/3)) * Math.PI/2;
+                        } else if (jumpCount < 1.8*totalFrames/3) {
+                            // Peak phase
+                            phase = Math.PI/2;
+                        } else {
+                            // Descent phase
+                            phase = Math.PI/2 + ((jumpCount-1.8*totalFrames/3)/(totalFrames/3)) * Math.PI/2;
+                        }
+                        menorah.style.bottom = (jumpHeight * Math.sin(phase)) + 'px';
+                        jumpCount++;
+                        requestAnimationFrame(jumpAnimation);
+                    } else {
+                        isJumping = false;
+                        menorah.style.bottom = '0px';
+                    }
+                }
+                
+                requestAnimationFrame(jumpAnimation);
+            }
+        }
+
+        function createDreidel() {
+            if (gameIsOver) return;
+            
+            // Calculate minimum safe distance based on current speed
+            // This ensures the gap is always jumpable
+            const minSafeDistance = gameSpeed * 60; // Minimum pixels needed to clear a jump at current speed
+            
+            const lastDreidel = dreidels[dreidels.length - 1];
+            if (lastDreidel) {
+                const lastDreidelX = parseFloat(lastDreidel.style.left);
+                if (lastDreidelX > gameArea.clientWidth - minSafeDistance) {
+                    return; // Skip if too close to last dreidel
+                }
+            }
+            
+            const dreidel = document.createElement('img');
+            dreidel.src = 'assets/images/dreidel.png';
+            dreidel.classList.add('dreidel');
+            dreidel.style.left = gameArea.clientWidth + 'px';
+            dreidel.dataset.speed = gameSpeed;
+            gameArea.appendChild(dreidel);
+            dreidels.push(dreidel);
+
+            function moveDreidel() {
+                if (gameIsOver) return;
+                
+                const x = parseFloat(dreidel.style.left);
+                if (x < -30) {
+                    gameArea.removeChild(dreidel);
+                    dreidels = dreidels.filter(d => d !== dreidel);
+                    score++;
+                    scoreValue.textContent = score;
+                    // Increase game speed when dreidel is passed
+                    gameSpeed = Math.min(maxSpeed, gameSpeed + speedIncrease);
+                } else {
+                    dreidel.style.left = (x - parseFloat(dreidel.dataset.speed)) + 'px';
+                    checkCollision(dreidel);
+                    requestAnimationFrame(moveDreidel);
+                }
+            }
+
+            requestAnimationFrame(moveDreidel);
+        }
+
+        function checkCollision(dreidel) {
+            const menorahRect = menorah.getBoundingClientRect();
+            const dreidelRect = dreidel.getBoundingClientRect();
+
+            if (menorahRect.right > dreidelRect.left + 10 &&
+                menorahRect.left < dreidelRect.right - 10 &&
+                menorahRect.bottom > dreidelRect.top + 10 &&
+                menorahRect.top < dreidelRect.bottom - 10) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            gameIsOver = true;
+            gameOverScreen.style.display = 'block';
+            finalScore.textContent = score;
+        }
+
+        function resetGame() {
+            gameIsOver = false;
+            score = 0;
+            gameSpeed = 4;
+            scoreValue.textContent = '0';
+            gameOverScreen.style.display = 'none';
+            dreidels.forEach(dreidel => gameArea.removeChild(dreidel));
+            dreidels = [];
+            scheduleNextDreidel();
+        }
+
+        function scheduleNextDreidel() {
+            if (!gameIsOver) {
+                // More random timing, but scaled with game speed
+                const baseDelay = 800; // Faster base spawn rate
+                const randomFactor = Math.random() * 1200; // More randomness
+                const speedAdjustment = maxSpeed / (gameSpeed + 1);
+                
+                // Delay gets shorter as speed increases, but maintains minimum safe gap
+                const delay = (baseDelay + randomFactor) * speedAdjustment;
+                
+                setTimeout(() => {
+                    // Random chance for double or triple dreidels (if safe to do so)
+                    const spawnCount = Math.random() < 0.3 ? 
+                        (Math.random() < 0.5 ? 2 : 3) : 1;
+                    
+                    for(let i = 0; i < spawnCount; i++) {
+                        setTimeout(() => createDreidel(), i * 100); // Slight delay between multiple spawns
+                    }
+                    
+                    scheduleNextDreidel();
+                }, delay);
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                jump();
+            } else if (event.code === 'Enter' && gameIsOver) {
+                resetGame();
+            }
+        });
+
+        // Replace the setInterval with initial scheduling
+        // Remove or comment out: setInterval(createDreidel, 2000);
+        scheduleNextDreidel();
+
+        // Add touch/click support
+        document.getElementById('jumpButton')?.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+
+        // Update event listeners to include touch
+        document.addEventListener('touchstart', (e) => {
+            if (gameIsOver) {
+                resetGame();
+            } else {
+                jump();
+            }
+        });
+
+        // Make game area responsive to window size
+        function updateGameAreaSize() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.style.width = window.innerWidth + 'px';
+            gameArea.style.height = window.innerHeight * 0.5 + 'px';
+        }
+
+        window.addEventListener('resize', updateGameAreaSize);
+        updateGameAreaSize(); // Initial size
+    </script>
+</body>
+</html> 
